@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
-	"unicode/utf8"
 )
 
 type lineRegexps struct {
@@ -27,26 +26,18 @@ func TransformEngilishDefinitions() {
 	files, err := filepath.Glob("data/english/CIDE.*")
 	check(err)
 
-	results := *processFiles(files, &regexps)
+	results := *processEnlishDataFiles(files, &regexps)
 
 	fmt.Println(len(results))
 
-	file, err := os.Create("output/english.tsv")
-	check(err)
-	defer file.Close()
-
-	fmt.Println("Dumping results to output/english.tsv")
-	for word, definition := range results {
-		line := fmt.Sprintf("%s\t%s\n", word, definition)
-		file.WriteString(line)
-	}
+	dumpFile(&results, "english")
 }
 
-func processFiles(files []string, regexps *lineRegexps) *map[string]string {
+func processEnlishDataFiles(files []string, regexps *lineRegexps) *map[string]string {
 	results := make(map[string]string)
 	for _, path := range files {
 		fmt.Printf("Processing: %s", path)
-		letterResults := filterWords(parseFile(path, &*regexps), 5)
+		letterResults := filterWords(parseEnglishDataFile(path, &*regexps), 5)
 		fmt.Printf(" found %d \n", len(letterResults))
 
 		for word, def := range letterResults {
@@ -56,17 +47,7 @@ func processFiles(files []string, regexps *lineRegexps) *map[string]string {
 	return &results
 }
 
-func filterWords(data map[string]string, limit int) map[string]string {
-	results := make(map[string]string)
-	for word, definition := range data {
-		if utf8.RuneCountInString(word) == limit {
-			results[word] = definition
-		}
-	}
-	return results
-}
-
-func parseFile(path string, regexps *lineRegexps) map[string]string {
+func parseEnglishDataFile(path string, regexps *lineRegexps) map[string]string {
 	file, err := os.Open(path)
 	check(err)
 	defer file.Close()
@@ -111,10 +92,4 @@ func matchDefinition(line string, regexps *lineRegexps) (string, bool) {
 
 func removeTags(text string, regexps *lineRegexps) string {
 	return string(regexps.tags.ReplaceAll([]byte(text), []byte("")))
-}
-
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
 }
