@@ -24,7 +24,7 @@ func TransformEngilishDefinitions() {
 		tags:       regexp.MustCompile(`(<\w+>)|(</\w+>)`),
 	}
 
-	files, err := filepath.Glob("../data/english/CIDE.*")
+	files, err := filepath.Glob("data/english/CIDE.*")
 	check(err)
 
 	results := *processFiles(files, &regexps)
