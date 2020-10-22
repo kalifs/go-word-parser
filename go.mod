@@ -1,3 +1,3 @@
-module github.com/kalifs/go-word-parse
+module github.com/kalifs/go-word-parser
 
 go 1.15
