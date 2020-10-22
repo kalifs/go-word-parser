@@ -1,9 +1,9 @@
 package main
 
 import (
-	project "github.com/kalifs/go-word-parser/transformer"
+	"github.com/kalifs/go-word-parser/internal/transformer"
 )
 
 func main() {
-	project.TransformEngilishDefinitions()
+	transformer.TransformEngilishDefinitions()
 }
